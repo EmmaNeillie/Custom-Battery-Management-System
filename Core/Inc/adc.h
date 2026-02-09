@@ -1,0 +1,73 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file    adc.h
+  * @brief   This file contains all the function prototypes for
+  *          the adc.c file
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2025 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef __ADC_H__
+#define __ADC_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
+extern ADC_HandleTypeDef hadc2;
+
+/* USER CODE BEGIN Private defines */
+#define VDDA_MV         3300U
+#define ADC_MAX_COUNTS  4095U
+  
+#define CH1_SENSE_mV_PER_A  20  // high range - 20mV/A sensitivity
+#define CH2_SENSE_mV_PER_A  2.5  // low range - 2.5mV/A sensitivity
+#define ADC_TIMEOUT_MS  10
+
+typedef struct {
+    uint16_t ch1;
+    uint16_t ch2;
+} TSCurrentRaw_t;
+
+typedef struct {
+    int32_t ch1_current; // in microamps
+    int32_t ch2_current; // in microamps
+} TSCurrentConverted_t;
+
+static uint16_t ch1_offset_adc = ADC_MAX_COUNTS / 2;
+static uint16_t ch2_offset_adc = ADC_MAX_COUNTS / 2;
+
+/* USER CODE END Private defines */
+
+void MX_ADC2_Init(void);
+TSCurrentConverted_t ADC2_GetTSCurrent(void);
+TSCurrentConverted_t adcConvertTSCurrent(TSCurrentRaw_t result);
+
+/* USER CODE BEGIN Prototypes */
+
+/* USER CODE END Prototypes */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __ADC_H__ */
+
