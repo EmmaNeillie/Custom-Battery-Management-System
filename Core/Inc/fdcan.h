@@ -41,31 +41,28 @@ extern SystemMonitorValues_t values;
 /* CAN Message IDs */
 // TODO: Update these IDs as per final CAN specification
 #define CAN_MSG_ID_BMS_STATUS           0x100  // BMS status message
-#define CAN_MSG_ID_PACK_VOLTAGE         0x101  // Pack voltage and current
 #define CAN_MSG_ID_CELL_VOLTAGES_1      0x102  // Cell voltages 1-4
 #define CAN_MSG_ID_CELL_VOLTAGES_2      0x103  // Cell voltages 5-8
-#define CAN_MSG_ID_TEMPERATURES         0x104  // Temperature readings
-#define CAN_MSG_ID_SOC_SOH              0x105  // State of Charge and State of Health
-#define CAN_MSG_ID_FAULT_STATUS         0x106  // Fault/warning flags
-#define CAN_MSG_ID_BALANCING_STATUS     0x107  // Cell balancing status
+#define CAN_MSG_ID_CELL_VOLTAGES_3      0x104  // Cell voltages 9-12
+#define CAN_MSG_ID_TEMPERATURES         0x105  // Temperature readings
 
-/* Accept IDs 0x100 .. 0x107 (standard 11-bit IDs).
+#define CAN_MSG_ID_PACK_STATS           0x201  // Pack voltage and current
+#define CAN_MSG_ID_FAULT_STATUS         0x207  // Fault/warning flags
+
+/* Accept IDs 0x100 .. 0x208 (standard 11-bit IDs).
   Lower 3 bits vary, so match bits 10..3. Mask = 0b11111111000 = 0x7F8 */
 #define FDCAN_ACCEPT_ID   0x100U
 #define FDCAN_ACCEPT_MASK 0x7F8U
 
 /* CAN Message Cache Structure */
-typedef struct {
-    FDCAN_RxHeaderTypeDef header;
-    uint8_t data[8];
-    uint32_t timestamp;
-    volatile uint8_t valid;  // Flag indicating new data available
-} FDCAN_CachedMessage_t;
 
 typedef struct {
-    uint16_t pack_voltage_mv;   // Pack voltage in millivolts
-    int16_t pack_current_ma;    // Pack current in milliamps (signed for charge/discharge)
-
+    uint16_t    packVoltage_V;      // Pack voltage in volts
+    int16_t     packCurrent_A;      // Pack current in amps (signed for charge/discharge)
+    uint8_t     packSOH;            // State of Health in percentage (0-100)
+    uint8_t     packSOC;            // State of Charge in percentage (0-100)
+    uint8_t     boardTemp;          // Board temperature in °C
+    uint8_t     SDCstatus;          // SDC status (0 = fault, 1 = normal)
 } CAN_MSG_PackStats_t;
 
 typedef struct {

@@ -1,13 +1,4 @@
 #include "system_monitor.h"
-#include "adc.h"
-#include "cell.h"
-#include "accumulator.h"
-#include "utilities.h"
-#include "project.h"
-#include "fdcan.h"
-#include "soc.h"
-#include <string.h>
-#include <stdbool.h>
 
 void SystemMonitor_Init(void)
 {
@@ -64,9 +55,10 @@ void SystemMonitor_Update(void)
     // PACK POWER
     values.packPower = values.packVoltage * values.packCurrent;
     
-    // TODO: Implement SOC calculation
+    // TODO: Implement SOC & SOH calculation
     // STATE OF CHARGE (SOC) & STATE OF HEALTH (SOH)
-    // CalculateSOC(&values.packSOC, &values.packSOH, &values.packCurrent, HAL_GetTick());
+    CalculateSOC(&values, HAL_GetTick());
+    CalculateSOH(&values);
 
     // BOARD TEMPERATURE
     values.boardTemp = I2C3_SensorRead();
@@ -79,15 +71,15 @@ void SystemMonitor_HandleRxCAN1(FDCAN_RxHeaderTypeDef *rxHeader, uint8_t *data)
     if (rxHeader == NULL || data == NULL) return;
 
     switch (rxHeader->Identifier) {
-        case 0x102:
-        case 0x103:
-        case 0x104: {   /* Cell Voltages */
+        case CAN_MSG_ID_CELL_VOLTAGES_1:
+        case CAN_MSG_ID_CELL_VOLTAGES_2:
+        case CAN_MSG_ID_CELL_VOLTAGES_3: {   /* Cell Voltages */
             CAN_MSG_CellVoltages_t *cellData = (CAN_MSG_CellVoltages_t *)data;
             SystemMonitor_UpdateCellVoltageData(cellData, rxHeader->Identifier);
             break;
         }
 
-        case 0x105: { /* Cell Temperatures */
+        case CAN_MSG_ID_TEMPERATURES: { /* Cell Temperatures */
             CAN_MSG_SegTemps_t *tempData = (CAN_MSG_SegTemps_t *)data;
             SystemMonitor_UpdateTemperatureData(tempData);
             break;
@@ -111,11 +103,8 @@ void SystemMonitor_HandleRxCAN2(FDCAN_RxHeaderTypeDef *rxHeader, uint8_t *data){
     switch (values.mode) {
         case CHARGE:
             switch (rxHeader->Identifier) {
-                case 0x300: {
+                case CHARGER_MSG2_ID: {
                     break; 
-                }
-                case 0x301: {
-                    break;
                 }
                 default: {
                     break;
@@ -136,13 +125,13 @@ void SystemMonitor_UpdateCellVoltageData(CAN_MSG_CellVoltages_t *cellData, uint3
     if (cellData == NULL) return;
     int index = 0;
     switch (id) {
-        case 0x102:
+        case CAN_MSG_ID_CELL_VOLTAGES_1:
             index = 0;
             break;
-        case 0x103:
+        case CAN_MSG_ID_CELL_VOLTAGES_2:
             index = 6;
             break;
-        case 0x104:
+        case CAN_MSG_ID_CELL_VOLTAGES_3:
             index = 12;
             break;
         default:
@@ -209,12 +198,15 @@ void SystemMonitor_CalculateTotalPackVoltage(float *packVoltage, SystemVoltageVa
     *packVoltage = totalVoltage;
 }
 
-// TODO: Implement CAN send function, decide on what information is to be sent to the ECU and in what format
 void SystemMonitor_SendCAN(void)
 {
     CAN_MSG_PackStats_t msg;
-    msg.pack_voltage_mv = (uint16_t)(values.packVoltage * 1000.0f);
-    msg.pack_current_ma = (int16_t)(values.packCurrent * 1000.0f);
+    msg.packVoltage_V = (uint16_t)(values.packVoltage);
+    msg.packCurrent_A = (int16_t)(values.packCurrent);
+    msg.packSOH = (uint8_t)values.packSOH;
+    msg.packSOC = (uint8_t)values.packSOC;
+    msg.boardTemp = (uint8_t)values.boardTemp;
+    msg.SDCstatus = values.SDCstatus ? 1 : 0;
 
     CAN_Transmit(0x201, (uint8_t *)&msg, sizeof(msg));
 }

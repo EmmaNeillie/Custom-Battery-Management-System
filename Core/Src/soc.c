@@ -37,39 +37,15 @@
  * {https://www.renesas.com/en/document/apn/coulomb-counting-and-state-charge-estimation-featuring-raa489206isl94216a-bfe}
 */
 
-#define INITIAL_FULL_CHARGE_V MAX_TRACTIVE_V
-#define INITIAL_FULL_DISCHARGE_V MIN_TRACTIVE_V
-
-void SOCinit()
-
+//TODO: Implement SOC and SOH functions
 uint32_t CalculateSOC(SystemMonitorValues_t *systemValues, uint32_t *time)
 {
-    // 
+    //Placeholder implementation - return 100% SOC for now
     return 0;
+}
 
-
-    // size_t tableSize = sizeof(batterySocTable) / sizeof(batterySocTable[0]);
-
-    // if (voltage_mv >= batterySocTable[0].voltage_mv) {
-    //     return batterySocTable[0].soc_pct10;
-    // }
-    // if (voltage_mv <= batterySocTable[tableSize - 1].voltage_mv) {
-    //     return batterySocTable[tableSize - 1].soc_pct10;
-    // }
-
-    // for (size_t i = 0; i < tableSize - 1; i++) {
-    //     if (voltage_mv >= batterySocTable[i].voltage_mv && voltage_mv <= batterySocTable[i + 1].voltage_mv) {
-    //         uint32_t v1 = batterySocTable[i].voltage_mv;
-    //         uint32_t soc1 = batterySocTable[i].soc_pct10;
-    //         uint32_t v2 = batterySocTable[i + 1].voltage_mv;
-    //         uint32_t soc2 = batterySocTable[i + 1].soc_pct10;
-
-    //         // Linear interpolation
-    //         // soc = soc1 + (soc2 - soc1) * (voltage_mv - v1) / (v2 - v1)
-    //         uint32_t soc = soc1 + ((soc2 - soc1) * (voltage_mv - v1)) / (v2 - v1);
-    //         return soc;
-    //     }
-    // }
-
-    // return 0; // Error case (0%)
+uint16_t CalculateSOH(SystemMonitorValues_t *systemValues)
+{
+    // Placeholder implementation - return 100% SOH for now
+    return 1000; // 100.0% in tenths of percent
 }

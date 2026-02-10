@@ -4,6 +4,14 @@
 #include <stdbool.h>
 #include "stm32g4xx_hal.h"
 #include "accumulator.h"
+#include "adc.h"
+#include "cell.h"
+#include "utilities.h"
+#include "project.h"
+#include "fdcan.h"
+#include "soc.h"
+#include "charger.h"
+#include <string.h>
 
 #define SYSTEM_MODULE_COUNT 14
 #define TEMPERATURES_PER_MODULE 4
