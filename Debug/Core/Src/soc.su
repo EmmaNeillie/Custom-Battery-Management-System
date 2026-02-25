@@ -1,0 +1,2 @@
+../Core/Src/soc.c:41:10:CalculateSOC	16	static
+../Core/Src/soc.c:47:10:CalculateSOH	16	static

@@ -1,0 +1,7 @@
+../Core/Src/i2c.c:30:6:MX_I2C3_Init	4
+../Core/Src/i2c.c:73:6:HAL_I2C_MspInit	3
+../Core/Src/i2c.c:113:6:HAL_I2C_MspDeInit	2
+../Core/Src/i2c.c:140:19:I2C_Write	1
+../Core/Src/i2c.c:146:19:I2C_Read	1
+../Core/Src/i2c.c:152:7:LM75B_ConvertTemp	1
+../Core/Src/i2c.c:162:7:I2C3_SensorRead	2

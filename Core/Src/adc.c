@@ -19,9 +19,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "adc.h"
-#include "project.h"
 
 /* USER CODE BEGIN 0 */
+
+static uint16_t ch1_offset_adc = ADC_MAX_COUNTS / 2;
+static uint16_t ch2_offset_adc = ADC_MAX_COUNTS / 2;
 
 /* USER CODE END 0 */
 
@@ -207,4 +209,9 @@ TSCurrentConverted_t ADC2_GetTSCurrent(void)
     converted.ch2_current = ch2Current(result.ch2);
     return converted;
 }
+
+  void ADC2_GetTSCurrentTask(void)
+  {
+    (void)ADC2_GetTSCurrent();
+  }
 /* USER CODE END 1 */

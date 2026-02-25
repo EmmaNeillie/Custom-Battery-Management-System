@@ -1,0 +1,3 @@
+../Core/Src/scheduler.c:8:6:Scheduler_Init	2
+../Core/Src/scheduler.c:20:6:Scheduler_AddTask	3
+../Core/Src/scheduler.c:32:6:Scheduler_RunTasks	5

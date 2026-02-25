@@ -1,0 +1,10 @@
+../Core/Src/system_monitor.c:10:13:SystemMonitor_CurrentFaultDetection	1
+../Core/Src/system_monitor.c:15:6:SystemMonitor_Init	1
+../Core/Src/system_monitor.c:43:6:setSystemMode	1
+../Core/Src/system_monitor.c:57:6:SystemMonitor_Update	1
+../Core/Src/system_monitor.c:82:6:SystemMonitor_HandleRxCAN1	7
+../Core/Src/system_monitor.c:112:6:SystemMonitor_HandleRxCAN2	5
+../Core/Src/system_monitor.c:138:6:SystemMonitor_UpdateCellVoltageData	8
+../Core/Src/system_monitor.c:169:6:SystemMonitor_UpdateTemperatureData	10
+../Core/Src/system_monitor.c:203:6:SystemMonitor_CalculateTotalPackVoltage	6
+../Core/Src/system_monitor.c:216:6:SystemMonitor_SendCAN	1

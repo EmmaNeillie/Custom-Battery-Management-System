@@ -36,10 +36,14 @@ extern I2C_HandleTypeDef hi2c3;
 
 /* USER CODE BEGIN Private defines */
 
+#define I2C_TIMEOUT_MS 10U
+#define LM75B_I2C_ADDR_7BIT 0x4FU
+
 /* USER CODE END Private defines */
 
 void MX_I2C3_Init(void);
 float LM75B_ConvertTemp(uint8_t msb, uint8_t lsb);
+float I2C3_SensorRead(void);
 float I2C3_SensorReadTask(void);
 
 /* USER CODE BEGIN Prototypes */

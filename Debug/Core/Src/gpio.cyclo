@@ -1,0 +1,4 @@
+../Core/Src/gpio.c:48:6:MX_GPIO_Init	1
+../Core/Src/gpio.c:97:6:LED_Set	2
+../Core/Src/gpio.c:110:6:CheckChargerConnection	4
+../Core/Src/gpio.c:130:6:UpdateAMSStatus	2

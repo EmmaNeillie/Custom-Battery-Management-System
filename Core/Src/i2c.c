@@ -38,7 +38,7 @@ void MX_I2C3_Init(void)
 
   /* USER CODE END I2C3_Init 1 */
   hi2c3.Instance = I2C3;
-  hi2c3.Init.Timing = 0x20303E5D;
+  hi2c3.Init.Timing = 0x00503D58;
   hi2c3.Init.OwnAddress1 = 0;
   hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -140,13 +140,13 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 HAL_StatusTypeDef I2C_Write(uint16_t DevAddress, uint8_t regAddr, uint8_t *data, uint16_t size)
 {
     /* Implement I2C write operation here */
-    return HAL_I2C_Mem_Write(&hi2c3, DevAddress, regAddr, I2C_MEMADD_SIZE_8BIT, data, size, HAL_MAX_DELAY);
+  return HAL_I2C_Mem_Write(&hi2c3, DevAddress, regAddr, I2C_MEMADD_SIZE_8BIT, data, size, I2C_TIMEOUT_MS);
 }
 
 HAL_StatusTypeDef I2C_Read(uint16_t DevAddress,uint8_t regAddr, uint8_t *data, uint16_t size)
 {
     /* Implement I2C read operation here */
-    return HAL_I2C_Mem_Read(&hi2c3, DevAddress, regAddr, I2C_MEMADD_SIZE_8BIT, data, size, HAL_MAX_DELAY);
+  return HAL_I2C_Mem_Read(&hi2c3, DevAddress, regAddr, I2C_MEMADD_SIZE_8BIT, data, size, I2C_TIMEOUT_MS);
 }
 
 float LM75B_ConvertTemp(uint8_t msb, uint8_t lsb)
@@ -162,9 +162,10 @@ float LM75B_ConvertTemp(uint8_t msb, uint8_t lsb)
 float I2C3_SensorRead(void)
 {
     uint8_t sensorData[2];
-    if (I2C_Read(0x50 << 1, 0x00, sensorData, 2) == HAL_OK) // 0x00 is temp register
+  if (I2C_Read((LM75B_I2C_ADDR_7BIT << 1), 0x00, sensorData, 2) == HAL_OK) // 0x00 is temp register
     {
         return LM75B_ConvertTemp(sensorData[0], sensorData[1]);
     }
+  return 0.0f;
 }
 /* USER CODE END 1 */

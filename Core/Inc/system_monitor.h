@@ -7,10 +7,9 @@
 #include "adc.h"
 #include "cell.h"
 #include "utilities.h"
-#include "project.h"
-#include "fdcan.h"
 #include "soc.h"
 #include "charger.h"
+#include "fdcan.h"
 #include <string.h>
 
 #define SYSTEM_MODULE_COUNT 14
@@ -27,7 +26,7 @@ typedef enum {
     DISCHARGE
 } SystemMode_t;
 
-typedef struct {
+typedef struct SystemMonitorValues_t {
 	float packVoltage; // volts 
 	float packCurrent; // amps 
 	float packPower;   // watts 
@@ -36,7 +35,7 @@ typedef struct {
     float boardTemp; // degrees Celsius
     bool SDCstatus;
 	SystemMode_t mode;
-	uint32_t lastRxTime; 
+    uint32_t lastRxTime; 
 } SystemMonitorValues_t;
 
 typedef struct {
@@ -49,10 +48,10 @@ typedef struct {
     uint32_t lastRxTime; 
 } SystemVoltageValues_t;
 
-static SystemTemperatureValues_t temperatureValues;
-static SystemVoltageValues_t voltageValues;
-static SystemState_t currentState = SYSTEM_STATE_NORMAL;
-static SystemMonitorValues_t values;
+// static SystemTemperatureValues_t temperatureValues;
+// static SystemVoltageValues_t voltageValues;
+// static SystemState_t currentState = SYSTEM_STATE_NORMAL;
+extern SystemMonitorValues_t values;
 
 void SystemMonitor_Init(void);
 void SystemMonitor_Update(void);

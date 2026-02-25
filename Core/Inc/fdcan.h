@@ -31,12 +31,11 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
-#include "system_monitor.h"
 #include "stm32g4xx_it.h"
 
 extern FDCAN_HandleTypeDef hfdcan1;
+
 extern FDCAN_HandleTypeDef hfdcan2;
-extern SystemMonitorValues_t values;
 
 /* CAN Message IDs */
 // TODO: Update these IDs as per final CAN specification

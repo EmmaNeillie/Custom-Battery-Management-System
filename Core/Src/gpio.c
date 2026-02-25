@@ -45,12 +45,12 @@ extern SystemMonitorValues_t values;
         * EVENT_OUT
         * EXTI
 */
-void MX_GPIO_Init(void){
+void MX_GPIO_Init(void)
+{
 
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
@@ -63,33 +63,26 @@ void MX_GPIO_Init(void){
   HAL_GPIO_WritePin(RLED_GPIO_Port, RLED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, AMS_STATUS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, AMS_STATUS_Pin|CHARGER_ENABLE_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PtPin */
+  /*Configure GPIO pin : NRST_Pin */
   GPIO_InitStruct.Pin = NRST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(NRST_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PtPin */
+  /*Configure GPIO pin : RLED_Pin */
   GPIO_InitStruct.Pin = RLED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(RLED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PBPin PBPin */
-  GPIO_InitStruct.Pin = AMS_STATUS_Pin;
+  /*Configure GPIO pins : AMS_STATUS_Pin CHARGER_ENABLE_Pin */
+  GPIO_InitStruct.Pin = AMS_STATUS_Pin|CHARGER_ENABLE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : CHARGER_ENABLE - Input to detect charger connection */
-  GPIO_InitStruct.Pin = CHARGER_ENABLE_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLDOWN;  // Assumes charger pulls high when connected
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
@@ -101,19 +94,20 @@ void MX_GPIO_Init(void){
  * @param led LED identifier (0 = Red LED)
  * @param state LED state (0 = off, 1 = on)
  */
-void LED_Set(uint8_t state){
-  if (state){
-      HAL_GPIO_WritePin(RLED_GPIO_Port, RLED_Pin, GPIO_PIN_SET);
-  }
-  else{
-      HAL_GPIO_WritePin(RLED_GPIO_Port, RLED_Pin, GPIO_PIN_RESET);
-  }
+void LED_Set(uint8_t led, uint8_t state){
+    (void)led;
+    if (state){
+            HAL_GPIO_WritePin(RLED_GPIO_Port, RLED_Pin, GPIO_PIN_SET);
+    }
+    else{
+            HAL_GPIO_WritePin(RLED_GPIO_Port, RLED_Pin, GPIO_PIN_RESET);
+    }
 
 }
 /**
  * @brief Check charger connection and set system mode accordingly
  */
-static void CheckChargerConnection(void){
+void CheckChargerConnection(void){
     GPIO_PinState chargerConnected = HAL_GPIO_ReadPin(CHARGER_DETECT_PORT, CHARGER_DETECT_PIN);
     
     if (chargerConnected == GPIO_PIN_SET){
@@ -133,7 +127,7 @@ static void CheckChargerConnection(void){
 /**
  * @brief Update AMS status output pin based on SDC status
  */
-static void UpdateAMSStatus(void){
+void UpdateAMSStatus(void){
     if (values.SDCstatus == true){
         HAL_GPIO_WritePin(AMS_STATUS_PORT, AMS_STATUS_PIN, GPIO_PIN_SET);
     }

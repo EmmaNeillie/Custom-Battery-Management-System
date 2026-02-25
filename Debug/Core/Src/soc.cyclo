@@ -1,0 +1,2 @@
+../Core/Src/soc.c:41:10:CalculateSOC	1
+../Core/Src/soc.c:47:10:CalculateSOH	1
