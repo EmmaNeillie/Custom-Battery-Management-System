@@ -60,8 +60,8 @@ all: main-build
 main-build: UGR26_AMS.elf secondary-outputs
 
 # Tool invocations
-UGR26_AMS.elf UGR26_AMS.map: $(OBJS) $(USER_OBJS) C:\Users\emman\OneDrive\Documents\GitHub\UGR26_Custom_AMS\STM32G473RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "UGR26_AMS.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\emman\OneDrive\Documents\GitHub\UGR26_Custom_AMS\STM32G473RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UGR26_AMS.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+UGR26_AMS.elf UGR26_AMS.map: $(OBJS) $(USER_OBJS) ../STM32G473RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "UGR26_AMS.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"../STM32G473RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UGR26_AMS.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
