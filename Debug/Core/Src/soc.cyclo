@@ -1,2 +1,4 @@
-../Core/Src/soc.c:41:10:CalculateSOC	1
-../Core/Src/soc.c:47:10:CalculateSOH	1
+../Core/Src/soc.c:45:6:SOC_Init	3
+../Core/Src/soc.c:71:6:SOC_InitWrapper	1
+../Core/Src/soc.c:84:12:CalculateSOC	12
+../Core/Src/soc.c:143:10:CalculateSOH	6

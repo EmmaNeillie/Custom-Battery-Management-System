@@ -1,7 +1,11 @@
 #include "soc.h"
-#include "accumulator.h"
+#include "system_monitor.h"
 
 // State of Charge Estimation
+
+// Internal state (static to this module)
+static float soc_lastCurrent = 0.0f; // A - previous current for trapezoid integration
+static uint32_t soc_initialized = 0;
 
 // Method: Coloumb Counting - Integration of current over time to provide a relative measure of the 
 // battery's charge level
@@ -37,15 +41,143 @@
  * {https://www.renesas.com/en/document/apn/coulomb-counting-and-state-charge-estimation-featuring-raa489206isl94216a-bfe}
 */
 
-//TODO: Implement SOC and SOH functions
-uint32_t CalculateSOC(SystemMonitorValues_t *systemValues, uint32_t *time)
+// Initialize SOC state. Optionally pass initial SOC% (0..100). If unspecified use 100%.
+void SOC_Init(uint32_t currentTime, float initialSOC_per)
 {
-    //Placeholder implementation - return 100% SOC for now
-    return 0;
+    memset(&socState, 0, sizeof(socState));
+    memset(&sohState, 0, sizeof(sohState));
+    if (initialSOC_per < 0.0f) initialSOC_per = 0.0f;
+    if (initialSOC_per > 100.0f) initialSOC_per = 100.0f;
+
+    // Initialize any necessary variables or data structures for SOC estimation
+    socState.startTime = currentTime;
+    socState.startingCapacity = PACK_CAPACITY_Ah;
+    socState.currentCapacity = PACK_CAPACITY_Ah * (initialSOC_per / 100.0f);
+    socState.startingCharge_per = initialSOC_per;
+    socState.currentCharge_per = initialSOC_per;
+    socState.currentCurrent = 0.0f;
+    socState.averageCurrent = 0.0f;
+    soc_lastCurrent = 0.0f;
+    soc_initialized = 1;
+
+    sohState.estimatedCapacity_Ah = PACK_CAPACITY_Ah;
+    sohState.internalResistance = PACK_INITIAL_RESISTANCE;
+    sohState.soh_capacity = 100.0f;
+    sohState.soh_resistance = 100.0f;
+    sohState.soh_total = 100.0f;
+}
+
+// convenience wrapper: default to 100% if not given
+void SOC_InitWrapper(void)
+{
+    SOC_Init(0, 100.0f);
+}
+
+/*
+ * CalculateSOC
+ *  - systemValues->packCurrent is expected in Amps (A)
+ *  - time_ms is pointer to current time in milliseconds (monotonic)
+ *  - sign convention: packCurrent > 0 means discharge (reduces SOC).
+ *
+ * Returns the currentState_t (by value).
+ */
+socState_t CalculateSOC(SystemMonitorValues_t *systemValues, uint32_t *time)
+{
+    if (!soc_initialized) {
+        // If not initialized, choose starting point
+        SOC_Init(*time, 100.0f);
+    }
+
+    uint32_t now = *time;
+    uint32_t last = socState.startTime;
+
+    uint32_t deltaTime_ms = now - last;
+    if (deltaTime_ms == 0) {
+        // Avoid division by zero, return current state
+        return socState;
+    }
+
+    float currentNow = systemValues ? systemValues->packCurrent : 0.0f; // A
+
+    if (systemValues && systemValues->mode == CHARGE){
+        currentNow = -currentNow;
+    }
+
+    // Trapezoidal integration to calculate change in charge
+    float deltaQ_Ah = 0.0f;
+    if (deltaTime_ms > 0) {
+        float dt_s = (float)deltaTime_ms / 1000.0f; // Convert ms to seconds
+        deltaQ_Ah = ((soc_lastCurrent + currentNow) * 0.5f) * (dt_s / SECONDS_PER_HOUR); // Ah
+    }
+
+    //Update stored state
+    socState.currentCapacity -= deltaQ_Ah; // Ah
+
+    //Bound capacity
+    if (socState.currentCapacity < 0.0f) socState.currentCapacity = 0.0f;
+    if (socState.currentCapacity > socState.startingCapacity) socState.currentCapacity = socState.startingCapacity;
+
+    //Update percentage
+    if (socState.startingCapacity > 0.0f) {
+        socState.currentCharge_per = (socState.currentCapacity / socState.startingCapacity) * 100.0f;
+    }
+    else {
+        socState.currentCharge_per = 0.0f; // Avoid division by zero
+    }
+
+    // Update last current and time for next iteration
+    socState.currentCurrent = currentNow;
+    const float alpha = 0.1f; // Smoothing factor for average current
+    socState.averageCurrent = (1.0f - alpha) * socState.averageCurrent + alpha * currentNow; // Exponential moving average
+
+    soc_lastCurrent = currentNow;
+    socState.startTime = now;
+
+    // Percentage Clamp
+    if (socState.currentCharge_per < 0.0f) socState.currentCharge_per = 0.0f;
+    if (socState.currentCharge_per > 100.0f) socState.currentCharge_per = 100.0f;
+
+    return socState;
 }
 
 uint16_t CalculateSOH(SystemMonitorValues_t *systemValues)
 {
-    // Placeholder implementation - return 100% SOH for now
-    return 1000; // 100.0% in tenths of percent
+    if (!systemValues) {
+        return (uint16_t)(sohState.soh_total * 10.0f); // Return latest estimated SOH
+    }
+
+    float voltage = systemValues->packVoltage;
+    float current = systemValues->packCurrent;
+
+    float dV = voltage - sohState.lastVoltage;
+    float dI = current - sohState.lastCurrent;
+
+    // Internal Resistance Estimation
+    if (fabsf(dI) > 1.0f) // detect current step
+    {
+        float R_sample = fabsf(dV / dI);
+        const float alpha = 0.02f;
+        sohState.internalResistance =(1.0f - alpha) * sohState.internalResistance + alpha * R_sample;
+    }
+
+    // Capacity Estimation
+    float usedCapacity = socState.startingCapacity - socState.currentCapacity;
+    if (usedCapacity > 0.1f) // valid window
+    {
+        const float beta = 0.001f;
+        sohState.estimatedCapacity_Ah =(1.0f - beta) * sohState.estimatedCapacity_Ah + beta * usedCapacity;
+    }
+
+    sohState.soh_capacity = (sohState.estimatedCapacity_Ah / PACK_CAPACITY_Ah) * 100.0f;
+    sohState.soh_resistance = (PACK_INITIAL_RESISTANCE / sohState.internalResistance) * 100.0f;
+    sohState.soh_total = 0.7f * sohState.soh_capacity + 0.3f * sohState.soh_resistance;
+
+    if (sohState.soh_total > 100.0f) sohState.soh_total = 100.0f;
+    if (sohState.soh_total < 0.0f) sohState.soh_total = 0.0f;
+
+    sohState.lastVoltage = voltage;
+    sohState.lastCurrent = current;
+
+    return (uint16_t)(sohState.soh_total * 10.0f);
 }
+

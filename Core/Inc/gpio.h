@@ -27,6 +27,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "soc.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -35,21 +36,15 @@ extern "C" {
 /* USER CODE BEGIN Private defines */
 
 /**
- * @brief Check charger connection and set system mode accordingly
+ * @brief Set LED state
+ * @param state LED state (0 = off, 1 = on)
  */
-void CheckChargerConnection(void);
+void LED_Set(uint8_t state);
 
 /**
  * @brief Update AMS status output pin based on SDC status
  */
 void UpdateAMSStatus(void);
-
-/**
- * @brief Set LED state
- * @param led LED identifier
- * @param state LED state (0 = off, 1 = on)
- */
-void LED_Set(uint8_t led, uint8_t state);
 
 /* USER CODE END Private defines */
 

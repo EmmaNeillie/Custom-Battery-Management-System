@@ -52,15 +52,11 @@ typedef struct {
     int32_t ch2_current; // in microamps
 } TSCurrentConverted_t;
 
-// static uint16_t ch1_offset_adc = ADC_MAX_COUNTS / 2;
-// static uint16_t ch2_offset_adc = ADC_MAX_COUNTS / 2;
-
 /* USER CODE END Private defines */
 
 void MX_ADC2_Init(void);
 TSCurrentConverted_t ADC2_GetTSCurrent(void);
 TSCurrentConverted_t adcConvertTSCurrent(TSCurrentRaw_t result);
-void ADC2_GetTSCurrentTask(void);
 
 /* USER CODE BEGIN Prototypes */
 

@@ -27,20 +27,9 @@ FDCAN_HandleTypeDef hfdcan1;
 FDCAN_HandleTypeDef hfdcan2;
 /* USER CODE END 0 */
 
-FDCAN_HandleTypeDef hfdcan1;
-FDCAN_HandleTypeDef hfdcan2;
-
 /* FDCAN1 init function */
 void MX_FDCAN1_Init(void)
 {
-
-  /* USER CODE BEGIN FDCAN1_Init 0 */
-
-  /* USER CODE END FDCAN1_Init 0 */
-
-  /* USER CODE BEGIN FDCAN1_Init 1 */
-
-  /* USER CODE END FDCAN1_Init 1 */
   hfdcan1.Instance = FDCAN1;
   hfdcan1.Init.ClockDivider = FDCAN_CLOCK_DIV1;
   hfdcan1.Init.FrameFormat = FDCAN_FRAME_CLASSIC;
@@ -63,22 +52,10 @@ void MX_FDCAN1_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN FDCAN1_Init 2 */
-
-  /* USER CODE END FDCAN1_Init 2 */
-
 }
 /* FDCAN2 init function */
 void MX_FDCAN2_Init(void)
 {
-
-  /* USER CODE BEGIN FDCAN2_Init 0 */
-
-  /* USER CODE END FDCAN2_Init 0 */
-
-  /* USER CODE BEGIN FDCAN2_Init 1 */
-
-  /* USER CODE END FDCAN2_Init 1 */
   hfdcan2.Instance = FDCAN2;
   hfdcan2.Init.ClockDivider = FDCAN_CLOCK_DIV1;
   hfdcan2.Init.FrameFormat = FDCAN_FRAME_CLASSIC;
@@ -101,9 +78,6 @@ void MX_FDCAN2_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN FDCAN2_Init 2 */
-
-  /* USER CODE END FDCAN2_Init 2 */
 
 }
 
@@ -116,10 +90,6 @@ void HAL_FDCAN_MspInit(FDCAN_HandleTypeDef* fdcanHandle)
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
   if(fdcanHandle->Instance==FDCAN1)
   {
-  /* USER CODE BEGIN FDCAN1_MspInit 0 */
-
-  /* USER CODE END FDCAN1_MspInit 0 */
-
   /** Initializes the peripherals clocks
   */
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_FDCAN;
@@ -147,15 +117,9 @@ void HAL_FDCAN_MspInit(FDCAN_HandleTypeDef* fdcanHandle)
     GPIO_InitStruct.Alternate = GPIO_AF9_FDCAN1;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /* USER CODE BEGIN FDCAN1_MspInit 1 */
-
-  /* USER CODE END FDCAN1_MspInit 1 */
   }
   else if(fdcanHandle->Instance==FDCAN2)
   {
-  /* USER CODE BEGIN FDCAN2_MspInit 0 */
-
-  /* USER CODE END FDCAN2_MspInit 0 */
 
   /** Initializes the peripherals clocks
   */
@@ -184,9 +148,6 @@ void HAL_FDCAN_MspInit(FDCAN_HandleTypeDef* fdcanHandle)
     GPIO_InitStruct.Alternate = GPIO_AF9_FDCAN2;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /* USER CODE BEGIN FDCAN2_MspInit 1 */
-
-  /* USER CODE END FDCAN2_MspInit 1 */
   }
 }
 
@@ -195,9 +156,7 @@ void HAL_FDCAN_MspDeInit(FDCAN_HandleTypeDef* fdcanHandle)
 
   if(fdcanHandle->Instance==FDCAN1)
   {
-  /* USER CODE BEGIN FDCAN1_MspDeInit 0 */
 
-  /* USER CODE END FDCAN1_MspDeInit 0 */
     /* Peripheral clock disable */
     HAL_RCC_FDCAN_CLK_ENABLED--;
     if(HAL_RCC_FDCAN_CLK_ENABLED==0){
@@ -209,16 +168,9 @@ void HAL_FDCAN_MspDeInit(FDCAN_HandleTypeDef* fdcanHandle)
     PB9     ------> FDCAN1_TX
     */
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_8|GPIO_PIN_9);
-
-  /* USER CODE BEGIN FDCAN1_MspDeInit 1 */
-
-  /* USER CODE END FDCAN1_MspDeInit 1 */
   }
   else if(fdcanHandle->Instance==FDCAN2)
   {
-  /* USER CODE BEGIN FDCAN2_MspDeInit 0 */
-
-  /* USER CODE END FDCAN2_MspDeInit 0 */
     /* Peripheral clock disable */
     HAL_RCC_FDCAN_CLK_ENABLED--;
     if(HAL_RCC_FDCAN_CLK_ENABLED==0){

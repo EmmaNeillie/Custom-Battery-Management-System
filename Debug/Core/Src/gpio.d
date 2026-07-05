@@ -32,11 +32,12 @@ Core/Src/gpio.o: ../Core/Src/gpio.c ../Core/Inc/gpio.h ../Core/Inc/main.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr_ex.h \
  ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_wwdg.h \
+ ../Core/Inc/soc.h ../Core/Inc/accumulator.h ../Core/Inc/cell.h \
  ../Core/Inc/project.h ../Core/Inc/adc.h ../Core/Inc/i2c.h \
- ../Core/Inc/gpio.h ../Core/Inc/system_monitor.h \
- ../Core/Inc/accumulator.h ../Core/Inc/cell.h ../Core/Inc/utilities.h \
- ../Core/Inc/soc.h ../Core/Inc/project.h ../Core/Inc/diagnostics.h \
- ../Core/Inc/charger.h ../Core/Inc/fdcan.h ../Core/Inc/stm32g4xx_it.h
+ ../Core/Inc/gpio.h ../Core/Inc/system_monitor.h ../Core/Inc/utilities.h \
+ ../Core/Inc/project.h ../Core/Inc/diagnostics.h ../Core/Inc/fdcan.h \
+ ../Core/Inc/stm32g4xx_it.h ../Core/Inc/charger.h ../Core/Inc/SOCFlash.h \
+ ../Core/Inc/system_monitor.h
 ../Core/Inc/gpio.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
@@ -72,17 +73,19 @@ Core/Src/gpio.o: ../Core/Src/gpio.c ../Core/Inc/gpio.h ../Core/Inc/main.h \
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr_ex.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_wwdg.h:
+../Core/Inc/soc.h:
+../Core/Inc/accumulator.h:
+../Core/Inc/cell.h:
 ../Core/Inc/project.h:
 ../Core/Inc/adc.h:
 ../Core/Inc/i2c.h:
 ../Core/Inc/gpio.h:
 ../Core/Inc/system_monitor.h:
-../Core/Inc/accumulator.h:
-../Core/Inc/cell.h:
 ../Core/Inc/utilities.h:
-../Core/Inc/soc.h:
 ../Core/Inc/project.h:
 ../Core/Inc/diagnostics.h:
-../Core/Inc/charger.h:
 ../Core/Inc/fdcan.h:
 ../Core/Inc/stm32g4xx_it.h:
+../Core/Inc/charger.h:
+../Core/Inc/SOCFlash.h:
+../Core/Inc/system_monitor.h:

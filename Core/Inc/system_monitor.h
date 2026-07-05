@@ -8,8 +8,10 @@
 #include "cell.h"
 #include "utilities.h"
 #include "soc.h"
-#include "charger.h"
+#include "project.h"
 #include "fdcan.h"
+#include "charger.h"
+#include "SOCFlash.h"
 #include <string.h>
 
 #define SYSTEM_MODULE_COUNT 14
@@ -26,7 +28,7 @@ typedef enum {
     DISCHARGE
 } SystemMode_t;
 
-typedef struct SystemMonitorValues_t {
+typedef struct SystemMonitorValues {
 	float packVoltage; // volts 
 	float packCurrent; // amps 
 	float packPower;   // watts 
@@ -35,7 +37,7 @@ typedef struct SystemMonitorValues_t {
     float boardTemp; // degrees Celsius
     bool SDCstatus;
 	SystemMode_t mode;
-    uint32_t lastRxTime; 
+	uint32_t lastRxTime; 
 } SystemMonitorValues_t;
 
 typedef struct {
@@ -48,10 +50,9 @@ typedef struct {
     uint32_t lastRxTime; 
 } SystemVoltageValues_t;
 
-// static SystemTemperatureValues_t temperatureValues;
-// static SystemVoltageValues_t voltageValues;
-// static SystemState_t currentState = SYSTEM_STATE_NORMAL;
 extern SystemMonitorValues_t values;
+extern socState_t socState;
+extern sohState_t sohState;
 
 void SystemMonitor_Init(void);
 void SystemMonitor_Update(void);

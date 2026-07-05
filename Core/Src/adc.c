@@ -19,11 +19,20 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "adc.h"
+#include "project.h"
 
 /* USER CODE BEGIN 0 */
 
+// Static offset variables for current measurement
 static uint16_t ch1_offset_adc = ADC_MAX_COUNTS / 2;
 static uint16_t ch2_offset_adc = ADC_MAX_COUNTS / 2;
+
+// Debug snapshots for ADC2 conversion flow.
+volatile HAL_StatusTypeDef adc2_last_start_status = HAL_OK;
+volatile HAL_StatusTypeDef adc2_last_poll1_status = HAL_OK;
+volatile HAL_StatusTypeDef adc2_last_poll2_status = HAL_OK;
+volatile uint32_t adc2_last_state = 0;
+volatile uint32_t adc2_last_error = HAL_ADC_ERROR_NONE;
 
 /* USER CODE END 0 */
 
@@ -188,16 +197,34 @@ TSCurrentConverted_t ADC2_GetTSCurrent(void)
 {
     TSCurrentRaw_t result;
 
-    HAL_ADC_Start(&hadc2);
+    adc2_last_start_status = HAL_OK;
+    adc2_last_poll1_status = HAL_OK;
+    adc2_last_poll2_status = HAL_OK;
+    adc2_last_state = hadc2.State;
+    adc2_last_error = hadc2.ErrorCode;
 
-    if (HAL_ADC_PollForConversion(&hadc2, ADC_TIMEOUT_MS) != HAL_OK)
+    adc2_last_start_status = HAL_ADC_Start(&hadc2);
+    if (adc2_last_start_status != HAL_OK)
     {
+        adc2_last_state = hadc2.State;
+        adc2_last_error = hadc2.ErrorCode;
+        Error_Handler();
+    }
+
+    adc2_last_poll1_status = HAL_ADC_PollForConversion(&hadc2, ADC_TIMEOUT_MS);
+    if (adc2_last_poll1_status != HAL_OK)
+    {
+        adc2_last_state = hadc2.State;
+        adc2_last_error = hadc2.ErrorCode;
         Error_Handler();
     }
     result.ch1 = HAL_ADC_GetValue(&hadc2);
 
-    if (HAL_ADC_PollForConversion(&hadc2, ADC_TIMEOUT_MS) != HAL_OK)
+    adc2_last_poll2_status = HAL_ADC_PollForConversion(&hadc2, ADC_TIMEOUT_MS);
+    if (adc2_last_poll2_status != HAL_OK)
     {
+        adc2_last_state = hadc2.State;
+        adc2_last_error = hadc2.ErrorCode;
         Error_Handler();
     }
     result.ch2 = HAL_ADC_GetValue(&hadc2);
@@ -209,9 +236,4 @@ TSCurrentConverted_t ADC2_GetTSCurrent(void)
     converted.ch2_current = ch2Current(result.ch2);
     return converted;
 }
-
-  void ADC2_GetTSCurrentTask(void)
-  {
-    (void)ADC2_GetTSCurrent();
-  }
 /* USER CODE END 1 */

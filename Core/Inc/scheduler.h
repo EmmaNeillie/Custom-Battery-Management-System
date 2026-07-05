@@ -2,7 +2,7 @@
 #define SCHEDULER_H
 
 #include "stm32g4xx_hal.h"
-#include <stdint.h>
+#include "stdint.h"
 
 /* Task function pointer type */
 typedef void (*TaskFunction_t)(void);

@@ -1,16 +1,18 @@
 #include "system_monitor.h"
-#include "i2c.h"
 
+// Local helpers
+static void SystemMonitor_CurrentFaultDetection(TSCurrentConverted_t current);
+
+// Global variable definitions
 SystemMonitorValues_t values;
+socState_t socState;
+sohState_t sohState;
+
+// Static state variables
 static SystemTemperatureValues_t temperatureValues;
 static SystemVoltageValues_t voltageValues;
 static SystemState_t currentState = SYSTEM_STATE_NORMAL;
 static BatteryTopology_t batteryTopology;
-
-static void SystemMonitor_CurrentFaultDetection(TSCurrentConverted_t current)
-{
-    (void)current;
-}
 
 void SystemMonitor_Init(void)
 {
@@ -32,16 +34,29 @@ void SystemMonitor_Init(void)
     batteryTopology.numberOfSegments = NOOFSEGMENTS;
     batteryTopology.totalPackVoltage = NOM_TRACTIVE_V;
     batteryTopology.nominalCellVoltage = (float)NOM_TRACTIVE_V / (float)(ACCU_SERIES);
-    batteryTopology.totalCapacity = (float)TOTAL_PACK_CAPACITY_MAH / 1000.0f;
+    batteryTopology.totalCapacity = TOTAL_PACK_CAPACITY;
     batteryTopology.totalCellCount = ACCU_SERIES * ACCU_PARALLEL;
     
     currentState = SYSTEM_STATE_NORMAL;
     memset(&temperatureValues, 0, sizeof(temperatureValues));
     memset(&voltageValues, 0, sizeof(voltageValues));
+
+    if (!EEPROM_SOC_Persist_Init(&socState)) {
+        SOC_Init(HAL_GetTick(), values.packSOC);
+    }
 }
 
 void setSystemMode(SystemMode_t mode){
     values.mode = mode;
+}
+
+static void SystemMonitor_CurrentFaultDetection(TSCurrentConverted_t current)
+{
+    // ADC current is converted to mA in this project path, then to A.
+    float packCurrentA = (float)current.ch1_current / 1000.0f;
+    if (fabsf(packCurrentA) > (float)MAX_TS_CURRENT) {
+        currentState = SYSTEM_STATE_FAULT;
+    }
 }
 
 
@@ -56,6 +71,8 @@ void setSystemMode(SystemMode_t mode){
 
 void SystemMonitor_Update(void)
 {
+    uint32_t now_ms = HAL_GetTick();
+
     // PACK CURRENT
     TSCurrentConverted_t TScurrent = ADC2_GetTSCurrent();
     SystemMonitor_CurrentFaultDetection(TScurrent); 
@@ -67,10 +84,10 @@ void SystemMonitor_Update(void)
     // PACK POWER
     values.packPower = values.packVoltage * values.packCurrent;
     
-    // TODO: Implement SOC & SOH calculation
     // STATE OF CHARGE (SOC) & STATE OF HEALTH (SOH)
-    uint32_t now = HAL_GetTick();
-    CalculateSOC(&values, &now);
+    socState = CalculateSOC(&values, &now_ms);
+    EEPROM_SOC_Persist_SaveIfNeeded(&socState, now_ms);
+    values.packSOC = socState.currentCharge_per;
     CalculateSOH(&values);
 
     // BOARD TEMPERATURE
@@ -125,6 +142,9 @@ void SystemMonitor_HandleRxCAN2(FDCAN_RxHeaderTypeDef *rxHeader, uint8_t *data){
             }
             break;
         case DISCHARGE:
+            // TODO: Handle discharge-specific CAN messages if needed
+            break;
+        default:
             break;
     }
     values.lastRxTime = HAL_GetTick();

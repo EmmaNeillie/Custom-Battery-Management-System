@@ -7,20 +7,18 @@
 #define NOOFSEGMENTS    4               //segments
 #define NOOFVOLTAGETAPS 13              //voltage taps per segment
 
-
 #define MAX_TRACTIVE_V ACCU_SERIES*MAX_VOLTAGE          //V
 #define NOM_TRACTIVE_V ACCU_SERIES*NOM_VOLTAGE          //V
 #define MIN_TRACTIVE_V ACCU_SERIES*MIN_VOLTAGE          //V
 #define VOLTAGE_RANGE  MAX_TRACTIVE_V-MIN_TRACTIVE_V    //V
 
-#define TOTAL_PACK_CAPACITY_MAH 27000U  // mAh
-#define TOTAL_PACK_ENERGY_MJ   24.49f   // MJ
+#define TOTAL_PACK_CAPACITY 27000   //mAh
 #define MAX_DISCHARGE_BURST 30      //A
-#define MAX_CHARGING_CURRENT_C 1.67f  // C
+#define MAX_CHARGING_CURRENT 1.67   //C
 #define NOM_TS_CURRENT 135          //A
 #define MAX_TS_CURRENT 226          //A
-#define MAX_CHARGING_CURRENT_A 45U    // A
 #define MAX_COMB_MOTOR_POWER 57000  //W 
+#define PACK_INITIAL_RESISTANCE 0.05f // TODO CHECK THIS
 
 typedef struct {
     int cellsInParallel;       // Number of cells connected in parallel (P)
@@ -32,7 +30,5 @@ typedef struct {
     float totalCapacity;       // Total capacity of the pack (Ah)
     int totalCellCount;        // Total number of cells in the pack
 } BatteryTopology_t;
-
-// static BatteryTopology_t batteryTopology;
 
 #endif // ACCUMULATOR_H

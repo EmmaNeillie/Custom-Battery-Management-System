@@ -39,6 +39,7 @@ extern WWDG_HandleTypeDef hwwdg;
 /* USER CODE END Private defines */
 
 void MX_WWDG_Init(void);
+HAL_StatusTypeDef WWDG_Refresh(void);
 
 /* USER CODE BEGIN Prototypes */
 

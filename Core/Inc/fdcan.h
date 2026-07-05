@@ -34,7 +34,6 @@ extern "C" {
 #include "stm32g4xx_it.h"
 
 extern FDCAN_HandleTypeDef hfdcan1;
-
 extern FDCAN_HandleTypeDef hfdcan2;
 
 /* CAN Message IDs */

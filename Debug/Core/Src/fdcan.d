@@ -36,7 +36,8 @@ Core/Src/fdcan.o: ../Core/Src/fdcan.c ../Core/Inc/fdcan.h \
  ../Core/Inc/accumulator.h ../Core/Inc/cell.h ../Core/Inc/adc.h \
  ../Core/Inc/utilities.h ../Core/Inc/soc.h ../Core/Inc/project.h \
  ../Core/Inc/i2c.h ../Core/Inc/gpio.h ../Core/Inc/system_monitor.h \
- ../Core/Inc/diagnostics.h ../Core/Inc/charger.h ../Core/Inc/fdcan.h
+ ../Core/Inc/diagnostics.h ../Core/Inc/fdcan.h ../Core/Inc/charger.h \
+ ../Core/Inc/SOCFlash.h
 ../Core/Inc/fdcan.h:
 ../Core/Inc/main.h:
 ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h:
@@ -84,5 +85,6 @@ Core/Src/fdcan.o: ../Core/Src/fdcan.c ../Core/Inc/fdcan.h \
 ../Core/Inc/gpio.h:
 ../Core/Inc/system_monitor.h:
 ../Core/Inc/diagnostics.h:
-../Core/Inc/charger.h:
 ../Core/Inc/fdcan.h:
+../Core/Inc/charger.h:
+../Core/Inc/SOCFlash.h:
